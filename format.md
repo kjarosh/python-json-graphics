@@ -54,6 +54,6 @@ There are some supported types along with format which they use:
 * `point` &ndash; parameters: `x`, `y`
 * `square` &ndash; parameters: `x`, `y`, `size`
 * `circle` &ndash; parameters: `x`, `y`, `radius`
-* `ellipse` &ndash; parameters: `x`, `y`, `radiusa`, `radiusb`
+* `ellipse` &ndash; parameters: `x`, `y`, `radiusx`, `radiusy`
 * `rectangle` &ndash; parameters: `x`, `y`, `width`, `height`
 * `polygon` &ndash; parameters: `points` &ndash; list of vertices

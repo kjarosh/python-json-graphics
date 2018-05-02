@@ -77,7 +77,7 @@ class Ellipse(Drawable):
     
     @staticmethod
     def parse(color, data):
-        return Ellipse(color, data['x'], data['y'], data['radiusa'], data['radiusb'])
+        return Ellipse(color, data['x'], data['y'], data['radiusx'], data['radiusy'])
 
 
 class Circle:
@@ -98,12 +98,10 @@ class GraphicsFile(Drawable):
     }
     
     re_color_html = re.compile('^#[0-9A-Za-z]{6}$')
-    re_color_rgb = re.compile('^\\(\\d{1,3},\\d{1,3},\\d{1,3}\\)$')
+    _rgb_val = '(\\d{1,2}|2[0-4][0-9]|25[0-5])'
+    re_color_rgb = re.compile('^\\(' + _rgb_val + ',' + _rgb_val + ',' + _rgb_val + '\\)$')
     
-    def __init__(self, filename):
-        with open(filename) as opened:
-            data = json.load(opened)
-        
+    def __init__(self, data):
         self._palette = data['palette']
         self._screen = data['screen']
         self._figures = [self.__parsefig(fig) for fig in data['figures']]
@@ -112,15 +110,16 @@ class GraphicsFile(Drawable):
         figtype = data['type']
         
         if not figtype in self.figures:
-            raise InvalidFormatException('Unknown figure: ' + figtype)
+            raise InvalidFormatException('Unsupported figure type: ' + figtype)
         
         if 'color' in data:
             color = data['color']
         else:
-            if not 'fg' in self._screen:
-                raise InvalidFormatException('No fg color specified')
+            if not 'default_color' in self._screen:
+                raise InvalidFormatException(
+                    'Figure without color specified, but no default color found')
             
-            color = self._screen['fg']
+            color = self._screen['default_color']
         color = self.__parsecolor(color)
         
         return self.figures[figtype].parse(color, data)
@@ -133,7 +132,7 @@ class GraphicsFile(Drawable):
             return 'rgb' + color
         
         if not color in self._palette:
-            raise InvalidFormatException('Unknown color: ' + color)
+            raise InvalidFormatException('Unsupported color format: ' + color)
         
         return self._palette[color]
     
@@ -149,7 +148,16 @@ class GraphicsFile(Drawable):
         del draw
         
         return img
+    
+    @staticmethod
+    def from_file(filename):
+        with open(filename) as opened:
+            data = json.load(opened)
+        
+        return GraphicsFile(data)
+    
+    @staticmethod
+    def from_str(string):
+        data = json.loads(string)
+        return GraphicsFile(data)
 
-
-img = GraphicsFile('../sample.json').to_image()
-img.show()
