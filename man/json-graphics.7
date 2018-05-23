@@ -1,0 +1,243 @@
+.TH JSON-GRAPHICS 7 23-05-2018 "Kamil Jarosz" "Conversions and Miscellaneous"
+.SH NAME
+json-graphics \- format used by
+.BR json-graphics (1)
+
+.SH DESCRIPTION
+
+The format is divided into three sections. Each section corresponds to one
+key-value pair present in the JSON file.
+
+.SS Figures
+The section
+.B \&"figures\&"
+describes all figures present on the image. It is an array of objects with
+a given type which is present in the
+.B \&"type\&"
+property. Depending on the type its contents are described below.
+Additionally each figure may have an optional parameter
+.BR \&"color\&"
+which points to a color described in the
+.B Colors
+subsection and specifies the color of a figure.
+
+.TP 4
+.I \&"point\&"
+Draw a point. The parameters
+.BR \&"x\&" ", " \&"y\&"
+specify the position of this point.
+
+.TP 4
+.I \&"square\&"
+Draw a square. The parameters
+.BR \&"x\&" ", " \&"y\&"
+specify the position of the left-top vertex.
+The parameter
+.B \&"size\&"
+specifies the size of this square.
+
+.TP 4
+.I \&"rectangle\&"
+Draw a rectangle. The parameters
+.BR \&"x\&" ", " \&"y\&"
+specify the position of the left-top vertex.
+The parameters
+.BR \&"width\&" ", " \&"height\&"
+specify the size of this rectangle.
+
+.TP 4
+.I \&"circle\&"
+Draw a circle. The parameters
+.BR \&"x\&" ", " \&"y\&"
+specify the position of the center.
+The parameter
+.B \&"radius\&"
+specifies the radius of this circle.
+
+.TP 4
+.I \&"ellipse\&"
+Draw an ellipse. The parameters
+.BR \&"x\&" ", " \&"y\&"
+specify the position of the center.
+The parameters
+.BR \&"radiusx\&" ", " \&"radiusx\&"
+specify the radii of this ellipse.
+
+.TP 4
+.I \&"polygon\&"
+Draw a polygon. The parameter
+.BR \&"points\&" ,
+which is a list of points,
+specifies the positions of vertices of this polygon.
+Each point is a 2-element list containing respectively
+the x position and the y position of a point.
+
+.SS Screen
+
+The section
+.B \&"screen\&"
+contains general information about the image.
+
+.TP 4
+.BR \&"width\&" " & " \&"height\&"
+Those two values specify the size of the image in pixels.
+
+.TP 4
+.B \&"background\&"
+Specifies the color of the background. See the subsection
+.B Colors
+for more information.
+
+.TP 4
+.BR \&"default_color\&" " (optional)"
+Specifies the default figure color i.e. the color a figure will have when no
+.B \&"color\&"
+parameter is specified. In this situation when this parameter is missing,
+an error should be thrown. See the subsection
+.B Colors
+for more information.
+
+.SS Palette
+The
+.B \&"palette\&"
+section contains a mapping between names and colors.
+It consists of
+.RB \&" key :
+.IR value \&"
+pairs. When a color value does not match any of the supported formats,
+it is looked up in this palette and the corresponding
+.I value
+is used instead. See the subsection
+.B Colors
+for more information.
+
+.SS Colors
+
+There are two valid color formats:
+
+.TP 4
+.IB ( red , green , blue )
+RGB color format. Possible values for
+.BR red ", " green " and " blue :
+.IR 0-255 .
+
+.TP 4
+.IB # xxxxxx
+HTML color format. Possible values:
+.IR 000000-FFFFFF .
+
+.P
+Instead of the formats described above, a color name may be used.
+In this situation it is looked up in the palette. See the subsection
+.B Palette
+for more information.
+
+.SH EXAMPLE
+{
+.RS 4
+.BR \&"figures\&" :
+[
+.RS 4
+.RB { \&"type\&" :
+.IR \&"point\&" ,
+.BR \&"x\&" :
+.IR 1 ,
+.BR \&"y\&" :
+.IR 0 },
+.br
+.RB { \&"type\&" :
+.IR \&"polygon\&" ,
+.RS 4
+.BR \&"points\&" :
+.RI [[ 2 , 5 "], [" 3 , 14 "], [" 5 , 18 "], [" 11 , 18 "], [" 3 , 39 ]],
+.br
+.BR \&"color\&" :
+.IR \&"blue\&" },
+.RE
+.RB { \&"type\&" :
+.IR \&"rectangle\&" ,
+.RS 4
+.BR \&"x\&" :
+.IR 100 ,
+.BR \&"y\&" :
+.IR 50 ,
+.br
+.BR \&"width\&" :
+.IR 200 ,
+.BR \&"height\&" :
+.IR 50 },
+.RE
+.RB { \&"type\&" :
+.IR \&"square\&" ,
+.RS 4
+.BR \&"x\&" :
+.IR 150 ,
+.BR \&"y\&" :
+.IR 100 ,
+.br
+.BR \&"size\&" :
+.IR 80 ,
+.br
+.BR \&"color\&" :
+.IR \&"(255,255,255)\&" },
+.RE
+.RB { \&"type\&" :
+.IR \&"circle\&" ,
+.RS 4
+.BR \&"x\&" :
+.IR 800 ,
+.BR \&"y\&" :
+.IR 600 ,
+.br
+.BR \&"radius\&" :
+.IR 40 ,
+.br
+.BR \&"color\&" :
+.IR \&"#abcdef\&" }
+.RE
+.RE
+],
+.br
+.BR \&"screen\&" ": {"
+.RS 4
+.BR \&"width\&" :
+.IR 800 ,
+.br
+.BR \&"height\&" :
+.IR 600 ,
+.br
+.BR \&"background\&" :
+.IR \&"black\&" ,
+.br
+.BR \&"default_color\&" :
+.I \&"red\&"
+.RE
+ },
+.br
+.BR \&"palette\&" ": {"
+.RS 4
+.BR \&"red\&" :
+.IR \&"#ff0000\&" ,
+.br
+.BR \&"blue\&" :
+.IR \&"#0000ff\&" ,
+.br
+.BR \&"black\&" :
+.IR \&"#000000\&"
+.RE
+}
+.RE
+}
+
+.SH COPYRIGHT
+Copyright (C)  2018  Kamil Jarosz.
+
+.P
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU Free Documentation License, Version 1.3
+or any later version published by the Free Software Foundation;
+with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+
+.SH SEE ALSO
+.BR json-graphics (1)
+
