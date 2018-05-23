@@ -1,0 +1,10 @@
+#!/bin/sh
+cat <<EOC | xargs -0 -I code python3 -c code "$@" 
+import sys
+sys.path.insert(0, 'src')
+
+import main
+main.main('json-graphics')
+EOC
+
+

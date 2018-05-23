@@ -10,14 +10,15 @@ import sys
 from json_graphics import GraphicsFile, InvalidFormatException
 
 
-def main():
+def main(prog=None):
     parser = argparse.ArgumentParser(description='Render JSON graphics.')
-    parser.add_argument('file')
-    parser.add_argument('-o', '--output', required=False, metavar='file',
+    parser.add_argument('infile')
+    parser.add_argument('-o', '--output', required=False, metavar='outfile',
                         type=str, help='specify output file')
+    if prog != None: parser.prog = prog
     parsed = parser.parse_args(sys.argv[1:])
     
-    input_file = parsed.file
+    input_file = parsed.infile
     output_file = parsed.output
     
     try:
@@ -39,8 +40,8 @@ def main():
         except ValueError as ve:
             print('Invalid output file name: ' + str(ve), file=sys.stderr)
             sys.exit(1)
-            
 
 
 if __name__ == '__main__':
     main()
+
