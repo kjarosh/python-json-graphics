@@ -7,7 +7,7 @@ import json
 import re
 
 
-class InvalidFormatException(Exception):
+class InvalidFormatError(Exception):
     pass
 
 
@@ -110,14 +110,14 @@ class GraphicsFile(Drawable):
         figtype = data['type']
         
         if not figtype in self.figures:
-            raise InvalidFormatException('Unsupported figure type: ' + figtype)
+            raise InvalidFormatError('Unsupported figure type: ' + figtype)
         
         if 'color' in data:
             color = data['color']
         else:
             if not 'default_color' in self._screen:
-                raise InvalidFormatException(
-                    'Figure without color specified, but no default color found')
+                raise InvalidFormatError(
+                    'Figure with no color specified; no default color found')
             
             color = self._screen['default_color']
         color = self.__parsecolor(color)
@@ -132,7 +132,7 @@ class GraphicsFile(Drawable):
             return 'rgb' + color
         
         if not color in self._palette:
-            raise InvalidFormatException('Unsupported color format: ' + color)
+            raise InvalidFormatError('Unsupported color format: ' + color)
         
         return self._palette[color]
     
