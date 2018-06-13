@@ -7,7 +7,7 @@
 import argparse
 import sys
 
-from json_graphics import GraphicsFile, InvalidFormatException
+from json_graphics import GraphicsFile, InvalidFormatError
 
 
 def main(prog=None):
@@ -26,7 +26,7 @@ def main(prog=None):
     except FileNotFoundError:
         print('File \'' + input_file + '\' not found', file=sys.stderr)
         sys.exit(1)
-    except InvalidFormatException as ife:
+    except InvalidFormatError as ife:
         print('Invalid file format: ' + str(ife), file=sys.stderr)
         sys.exit(1)
     
