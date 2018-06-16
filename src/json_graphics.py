@@ -3,6 +3,7 @@
 '''
 
 from PIL import Image, ImageDraw
+from abc import abstractmethod
 import json
 import re
 
@@ -13,6 +14,7 @@ class InvalidFormatError(Exception):
 
 class Drawable:
 
+    @abstractmethod
     def draw(self, draw):
         raise NotImplementedError()
 
@@ -122,7 +124,11 @@ class GraphicsFile(Drawable):
             color = self._screen['default_color']
         color = self.__parsecolor(color)
         
-        return self.figures[figtype].parse(color, data)
+        try:
+            return self.figures[figtype].parse(color, data)
+        except KeyError as ke:
+            raise InvalidFormatError(
+                    'Invalid figure format, missing: ' + ke.args[0])
     
     def __parsecolor(self, color):
         if self.re_color_html.match(color):
