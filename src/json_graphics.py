@@ -89,7 +89,7 @@ class Circle:
         return Ellipse(color, data['x'], data['y'], data['radius'], data['radius'])
 
 
-class GraphicsFile(Drawable):
+class GraphicsFile:
     figures = {
         'point': Point,
         'rectangle': Rectangle,
